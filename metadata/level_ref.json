@@ -1,0 +1,3 @@
+{
+  "context": "CREATE VIEW customers_desc AS\nSELECT cust_id AS customer_id, name AS customer_name, email AS customer_email,\n       region, plan AS plan_type, joined AS signup_date, rep AS sales_rep\nFROM customers;\n\nCREATE VIEW products_desc AS\nSELECT sku AS product_sku, product AS product_name, cat AS category,\n       price AS list_price_cents\nFROM products;\n\nCREATE VIEW orders_desc AS\nSELECT oid AS order_id, cust_id AS customer_id, sku AS product_sku,\n       dt AS order_date, qty AS quantity, unit_price AS unit_price_cents,\n       discount AS discount_pct, revenue AS revenue_cents, refunded AS is_refunded\nFROM orders;\n\nUse customers_desc, products_desc, and orders_desc in all queries."
+}

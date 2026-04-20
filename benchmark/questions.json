@@ -1,0 +1,826 @@
+{
+  "tiers": {
+    "single_table": {
+      "label": "Single-table",
+      "question_ids": [
+        "s01",
+        "s02",
+        "s03",
+        "s04",
+        "s05",
+        "s06",
+        "s07",
+        "s08",
+        "s09",
+        "s10",
+        "s11",
+        "s12",
+        "s13",
+        "s14",
+        "s15",
+        "s16",
+        "s17",
+        "s18",
+        "s19",
+        "s20",
+        "s21",
+        "s22",
+        "s23",
+        "s24",
+        "s25"
+      ]
+    },
+    "two_join": {
+      "label": "Two-join",
+      "question_ids": [
+        "j01",
+        "j02",
+        "j03",
+        "j04",
+        "j05",
+        "j06",
+        "j07",
+        "j08",
+        "j09",
+        "j10",
+        "j11",
+        "j12",
+        "j13",
+        "j14",
+        "j15",
+        "j16",
+        "j17",
+        "j18",
+        "j19",
+        "j20",
+        "j21",
+        "j22",
+        "j23",
+        "j24",
+        "j25"
+      ]
+    },
+    "three_join": {
+      "label": "Three-join",
+      "question_ids": [
+        "t01",
+        "t02",
+        "t03",
+        "t04",
+        "t05",
+        "t06",
+        "t07",
+        "t08",
+        "t09",
+        "t10",
+        "t11",
+        "t12",
+        "t13",
+        "t14",
+        "t15",
+        "t16",
+        "t17",
+        "t18",
+        "t19",
+        "t20",
+        "t21",
+        "t22",
+        "t23",
+        "t24",
+        "t25"
+      ]
+    },
+    "complex": {
+      "label": "Complex",
+      "question_ids": [
+        "c01",
+        "c02",
+        "c03",
+        "c04",
+        "c05",
+        "c06",
+        "c07",
+        "c08",
+        "c09",
+        "c10",
+        "c11",
+        "c12",
+        "c13",
+        "c14",
+        "c15",
+        "c16",
+        "c17",
+        "c18",
+        "c19",
+        "c20",
+        "c21",
+        "c22",
+        "c23",
+        "c24",
+        "c25"
+      ]
+    }
+  },
+  "questions": [
+    {
+      "id": "s01",
+      "tier": "single_table",
+      "question": "How many customers are there in each region?",
+      "ground_truth_sql": "SELECT region, COUNT(*) AS customer_count FROM customers GROUP BY region ORDER BY customer_count DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "s02",
+      "tier": "single_table",
+      "question": "What is the breakdown of customers by plan type?",
+      "ground_truth_sql": "SELECT plan, COUNT(*) AS customer_count FROM customers GROUP BY plan ORDER BY customer_count DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "s03",
+      "tier": "single_table",
+      "question": "How many customers signed up in 2024?",
+      "ground_truth_sql": "SELECT COUNT(*) AS customers_2024 FROM customers WHERE joined >= '2024-01-01' AND joined < '2025-01-01'",
+      "result_type": "scalar"
+    },
+    {
+      "id": "s04",
+      "tier": "single_table",
+      "question": "Which sales rep manages the most customers?",
+      "ground_truth_sql": "SELECT rep, COUNT(*) AS customer_count FROM customers WHERE rep IS NOT NULL GROUP BY rep ORDER BY customer_count DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "s05",
+      "tier": "single_table",
+      "question": "How many customers have no sales rep?",
+      "ground_truth_sql": "SELECT COUNT(*) AS self_serve_count FROM customers WHERE rep IS NULL",
+      "result_type": "scalar"
+    },
+    {
+      "id": "s06",
+      "tier": "single_table",
+      "question": "What is the most common plan in the West region?",
+      "ground_truth_sql": "SELECT plan, COUNT(*) AS cnt FROM customers WHERE region = 'West' GROUP BY plan ORDER BY cnt DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "s07",
+      "tier": "single_table",
+      "question": "How many customers signed up each month in 2023?",
+      "ground_truth_sql": "SELECT strftime('%Y-%m', joined) AS month, COUNT(*) AS customer_count FROM customers WHERE joined >= '2023-01-01' AND joined < '2024-01-01' GROUP BY month ORDER BY month",
+      "result_type": "rows"
+    },
+    {
+      "id": "s08",
+      "tier": "single_table",
+      "question": "Which region has the most enterprise customers?",
+      "ground_truth_sql": "SELECT region, COUNT(*) AS enterprise_count FROM customers WHERE plan = 'enterprise' GROUP BY region ORDER BY enterprise_count DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "s09",
+      "tier": "single_table",
+      "question": "How many products are in each category?",
+      "ground_truth_sql": "SELECT cat, COUNT(*) AS product_count FROM products GROUP BY cat ORDER BY product_count DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "s10",
+      "tier": "single_table",
+      "question": "What is the average list price in dollars by product category?",
+      "ground_truth_sql": "SELECT cat, ROUND(AVG(price) / 100.0, 2) AS avg_price_dollars FROM products GROUP BY cat ORDER BY avg_price_dollars DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "s11",
+      "tier": "single_table",
+      "question": "Which product has the highest list price?",
+      "ground_truth_sql": "SELECT sku, product, ROUND(price / 100.0, 2) AS price_dollars FROM products ORDER BY price DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "s12",
+      "tier": "single_table",
+      "question": "How many products have a list price above $200?",
+      "ground_truth_sql": "SELECT COUNT(*) AS expensive_product_count FROM products WHERE price > 20000",
+      "result_type": "scalar"
+    },
+    {
+      "id": "s13",
+      "tier": "single_table",
+      "question": "What is the cheapest product in each category?",
+      "ground_truth_sql": "SELECT p.cat, p.product, ROUND(p.price / 100.0, 2) AS price_dollars\n        FROM products p\n        JOIN (SELECT cat, MIN(price) AS min_price FROM products GROUP BY cat) m\n          ON p.cat = m.cat AND p.price = m.min_price\n        ORDER BY p.cat",
+      "result_type": "rows"
+    },
+    {
+      "id": "s14",
+      "tier": "single_table",
+      "question": "How many orders were placed in 2024?",
+      "ground_truth_sql": "SELECT COUNT(*) AS orders_2024 FROM orders WHERE dt >= '2024-01-01' AND dt < '2025-01-01'",
+      "result_type": "scalar"
+    },
+    {
+      "id": "s15",
+      "tier": "single_table",
+      "question": "What is the total revenue across all orders in dollars?",
+      "ground_truth_sql": "SELECT ROUND(SUM(revenue) / 100.0, 2) AS total_revenue_dollars FROM orders",
+      "result_type": "scalar"
+    },
+    {
+      "id": "s16",
+      "tier": "single_table",
+      "question": "What is the overall refund rate as a percentage?",
+      "ground_truth_sql": "SELECT ROUND(100.0 * SUM(refunded) / COUNT(*), 2) AS refund_rate_pct FROM orders",
+      "result_type": "scalar"
+    },
+    {
+      "id": "s17",
+      "tier": "single_table",
+      "question": "What is the total revenue by month in 2024 in dollars?",
+      "ground_truth_sql": "SELECT strftime('%Y-%m', dt) AS month, ROUND(SUM(revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders WHERE dt >= '2024-01-01' AND dt < '2025-01-01'\n        GROUP BY month ORDER BY month",
+      "result_type": "rows"
+    },
+    {
+      "id": "s18",
+      "tier": "single_table",
+      "question": "How many orders included a discount?",
+      "ground_truth_sql": "SELECT COUNT(*) AS discounted_order_count FROM orders WHERE discount > 0",
+      "result_type": "scalar"
+    },
+    {
+      "id": "s19",
+      "tier": "single_table",
+      "question": "What is the average discount percentage on discounted orders?",
+      "ground_truth_sql": "SELECT ROUND(AVG(discount) * 100, 2) AS avg_discount_pct FROM orders WHERE discount > 0",
+      "result_type": "scalar"
+    },
+    {
+      "id": "s20",
+      "tier": "single_table",
+      "question": "What is the distribution of order quantities?",
+      "ground_truth_sql": "SELECT qty, COUNT(*) AS order_count FROM orders GROUP BY qty ORDER BY qty",
+      "result_type": "rows"
+    },
+    {
+      "id": "s21",
+      "tier": "single_table",
+      "question": "How many orders were placed each year?",
+      "ground_truth_sql": "SELECT strftime('%Y', dt) AS year, COUNT(*) AS order_count FROM orders GROUP BY year ORDER BY year",
+      "result_type": "rows"
+    },
+    {
+      "id": "s22",
+      "tier": "single_table",
+      "question": "What is the highest revenue from a single order in dollars?",
+      "ground_truth_sql": "SELECT ROUND(MAX(revenue) / 100.0, 2) AS max_order_revenue_dollars FROM orders",
+      "result_type": "scalar"
+    },
+    {
+      "id": "s23",
+      "tier": "single_table",
+      "question": "What is the total number of units sold across all orders?",
+      "ground_truth_sql": "SELECT SUM(qty) AS total_units_sold FROM orders",
+      "result_type": "scalar"
+    },
+    {
+      "id": "s24",
+      "tier": "single_table",
+      "question": "How many orders were refunded in each quarter of 2024?",
+      "ground_truth_sql": "SELECT 'Q' || CAST((CAST(strftime('%m', dt) AS INTEGER) + 2) / 3 AS TEXT) AS quarter,\n               COUNT(*) AS refunded_count\n        FROM orders WHERE dt >= '2024-01-01' AND dt < '2025-01-01' AND refunded = 1\n        GROUP BY quarter ORDER BY quarter",
+      "result_type": "rows"
+    },
+    {
+      "id": "s25",
+      "tier": "single_table",
+      "question": "What is the average revenue per order in dollars?",
+      "ground_truth_sql": "SELECT ROUND(AVG(revenue) / 100.0, 2) AS avg_order_revenue_dollars FROM orders",
+      "result_type": "scalar"
+    },
+    {
+      "id": "j01",
+      "tier": "two_join",
+      "question": "What is the total revenue by customer region in dollars?",
+      "ground_truth_sql": "SELECT c.region, ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id\n        GROUP BY c.region ORDER BY revenue_dollars DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "j02",
+      "tier": "two_join",
+      "question": "What is the average order value by plan type in dollars?",
+      "ground_truth_sql": "SELECT c.plan, ROUND(AVG(o.revenue) / 100.0, 2) AS avg_order_value_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id\n        GROUP BY c.plan ORDER BY avg_order_value_dollars DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "j03",
+      "tier": "two_join",
+      "question": "Which plan type has the highest refund rate?",
+      "ground_truth_sql": "SELECT c.plan, ROUND(100.0 * SUM(o.refunded) / COUNT(*), 2) AS refund_rate_pct\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id\n        GROUP BY c.plan ORDER BY refund_rate_pct DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "j04",
+      "tier": "two_join",
+      "question": "Who are the top 5 customers by total spend in dollars?",
+      "ground_truth_sql": "SELECT c.name, c.plan, ROUND(SUM(o.revenue) / 100.0, 2) AS total_spend_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id\n        GROUP BY c.cust_id ORDER BY total_spend_dollars DESC LIMIT 5",
+      "result_type": "rows"
+    },
+    {
+      "id": "j05",
+      "tier": "two_join",
+      "question": "How many orders did each sales rep close?",
+      "ground_truth_sql": "SELECT c.rep, COUNT(*) AS order_count\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id\n        WHERE c.rep IS NOT NULL GROUP BY c.rep ORDER BY order_count DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "j06",
+      "tier": "two_join",
+      "question": "What is the total revenue from enterprise plan customers in dollars?",
+      "ground_truth_sql": "SELECT ROUND(SUM(o.revenue) / 100.0, 2) AS enterprise_revenue_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id\n        WHERE c.plan = 'enterprise'",
+      "result_type": "scalar"
+    },
+    {
+      "id": "j07",
+      "tier": "two_join",
+      "question": "What is the average discount percentage by plan type?",
+      "ground_truth_sql": "SELECT c.plan, ROUND(AVG(o.discount) * 100, 2) AS avg_discount_pct\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id\n        GROUP BY c.plan ORDER BY avg_discount_pct DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "j08",
+      "tier": "two_join",
+      "question": "How many customers from each region have placed more than 3 orders?",
+      "ground_truth_sql": "SELECT c.region, COUNT(*) AS customer_count\n        FROM customers c\n        WHERE c.cust_id IN (SELECT cust_id FROM orders GROUP BY cust_id HAVING COUNT(*) > 3)\n        GROUP BY c.region ORDER BY customer_count DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "j09",
+      "tier": "two_join",
+      "question": "What is the total revenue from self-serve versus rep-assisted orders in dollars?",
+      "ground_truth_sql": "SELECT CASE WHEN c.rep IS NULL THEN 'Self-serve' ELSE 'Rep-assisted' END AS order_type,\n               ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id\n        GROUP BY order_type ORDER BY order_type",
+      "result_type": "rows"
+    },
+    {
+      "id": "j10",
+      "tier": "two_join",
+      "question": "Which region has the highest refund rate?",
+      "ground_truth_sql": "SELECT c.region, ROUND(100.0 * SUM(o.refunded) / COUNT(*), 2) AS refund_rate_pct\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id\n        GROUP BY c.region ORDER BY refund_rate_pct DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "j11",
+      "tier": "two_join",
+      "question": "What is the total revenue from customers who signed up in 2023 in dollars?",
+      "ground_truth_sql": "SELECT ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id\n        WHERE c.joined >= '2023-01-01' AND c.joined < '2024-01-01'",
+      "result_type": "scalar"
+    },
+    {
+      "id": "j12",
+      "tier": "two_join",
+      "question": "How many orders were placed by customers in each region in 2024?",
+      "ground_truth_sql": "SELECT c.region, COUNT(*) AS order_count\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id\n        WHERE o.dt >= '2024-01-01' AND o.dt < '2025-01-01'\n        GROUP BY c.region ORDER BY order_count DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "j13",
+      "tier": "two_join",
+      "question": "Which sales rep has the highest average order value in dollars?",
+      "ground_truth_sql": "SELECT c.rep, ROUND(AVG(o.revenue) / 100.0, 2) AS avg_order_value_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id\n        WHERE c.rep IS NOT NULL GROUP BY c.rep ORDER BY avg_order_value_dollars DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "j14",
+      "tier": "two_join",
+      "question": "What is the total revenue by product category in dollars?",
+      "ground_truth_sql": "SELECT p.cat, ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN products p ON o.sku = p.sku\n        GROUP BY p.cat ORDER BY revenue_dollars DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "j15",
+      "tier": "two_join",
+      "question": "Which product has generated the most total revenue in dollars?",
+      "ground_truth_sql": "SELECT p.product, ROUND(SUM(o.revenue) / 100.0, 2) AS total_revenue_dollars\n        FROM orders o JOIN products p ON o.sku = p.sku\n        GROUP BY p.sku ORDER BY total_revenue_dollars DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "j16",
+      "tier": "two_join",
+      "question": "What is the refund rate by product category?",
+      "ground_truth_sql": "SELECT p.cat, ROUND(100.0 * SUM(o.refunded) / COUNT(*), 2) AS refund_rate_pct\n        FROM orders o JOIN products p ON o.sku = p.sku\n        GROUP BY p.cat ORDER BY refund_rate_pct DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "j17",
+      "tier": "two_join",
+      "question": "What are the top 5 products by number of orders?",
+      "ground_truth_sql": "SELECT p.product, COUNT(*) AS order_count\n        FROM orders o JOIN products p ON o.sku = p.sku\n        GROUP BY p.sku ORDER BY order_count DESC LIMIT 5",
+      "result_type": "rows"
+    },
+    {
+      "id": "j18",
+      "tier": "two_join",
+      "question": "How many total units of each product category have been sold?",
+      "ground_truth_sql": "SELECT p.cat, SUM(o.qty) AS total_units\n        FROM orders o JOIN products p ON o.sku = p.sku\n        GROUP BY p.cat ORDER BY total_units DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "j19",
+      "tier": "two_join",
+      "question": "What is the average revenue per order by product category in dollars?",
+      "ground_truth_sql": "SELECT p.cat, ROUND(AVG(o.revenue) / 100.0, 2) AS avg_revenue_dollars\n        FROM orders o JOIN products p ON o.sku = p.sku\n        GROUP BY p.cat ORDER BY avg_revenue_dollars DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "j20",
+      "tier": "two_join",
+      "question": "What is the total revenue from Software products in 2024 in dollars?",
+      "ground_truth_sql": "SELECT ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN products p ON o.sku = p.sku\n        WHERE p.cat = 'Software' AND o.dt >= '2024-01-01' AND o.dt < '2025-01-01'",
+      "result_type": "scalar"
+    },
+    {
+      "id": "j21",
+      "tier": "two_join",
+      "question": "What is the average discount percentage by product category?",
+      "ground_truth_sql": "SELECT p.cat, ROUND(AVG(o.discount) * 100, 2) AS avg_discount_pct\n        FROM orders o JOIN products p ON o.sku = p.sku\n        GROUP BY p.cat ORDER BY avg_discount_pct DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "j22",
+      "tier": "two_join",
+      "question": "Which product category has the highest average order quantity?",
+      "ground_truth_sql": "SELECT p.cat, ROUND(AVG(o.qty), 2) AS avg_qty\n        FROM orders o JOIN products p ON o.sku = p.sku\n        GROUP BY p.cat ORDER BY avg_qty DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "j23",
+      "tier": "two_join",
+      "question": "What is the most ordered product?",
+      "ground_truth_sql": "SELECT p.product, COUNT(*) AS order_count\n        FROM orders o JOIN products p ON o.sku = p.sku\n        GROUP BY p.sku ORDER BY order_count DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "j24",
+      "tier": "two_join",
+      "question": "What is the total revenue from Hardware products ordered after 2023 in dollars?",
+      "ground_truth_sql": "SELECT ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN products p ON o.sku = p.sku\n        WHERE p.cat = 'Hardware' AND o.dt >= '2024-01-01'",
+      "result_type": "scalar"
+    },
+    {
+      "id": "j25",
+      "tier": "two_join",
+      "question": "How many distinct customers have ordered from each product category?",
+      "ground_truth_sql": "SELECT p.cat, COUNT(DISTINCT o.cust_id) AS customer_count\n        FROM orders o JOIN products p ON o.sku = p.sku\n        GROUP BY p.cat ORDER BY customer_count DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "t01",
+      "tier": "three_join",
+      "question": "What is the total revenue by customer region and product category in dollars?",
+      "ground_truth_sql": "SELECT c.region, p.cat, ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        GROUP BY c.region, p.cat ORDER BY c.region, revenue_dollars DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "t02",
+      "tier": "three_join",
+      "question": "Which sales rep generates the most revenue from Software products in dollars?",
+      "ground_truth_sql": "SELECT c.rep, ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE c.rep IS NOT NULL AND p.cat = 'Software'\n        GROUP BY c.rep ORDER BY revenue_dollars DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "t03",
+      "tier": "three_join",
+      "question": "What is the refund rate by plan type and product category?",
+      "ground_truth_sql": "SELECT c.plan, p.cat, ROUND(100.0 * SUM(o.refunded) / COUNT(*), 2) AS refund_rate_pct\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        GROUP BY c.plan, p.cat ORDER BY c.plan, refund_rate_pct DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "t04",
+      "tier": "three_join",
+      "question": "Who are the top 5 customers by spend on Hardware products in dollars?",
+      "ground_truth_sql": "SELECT c.name, c.plan, ROUND(SUM(o.revenue) / 100.0, 2) AS hardware_spend_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE p.cat = 'Hardware'\n        GROUP BY c.cust_id ORDER BY hardware_spend_dollars DESC LIMIT 5",
+      "result_type": "rows"
+    },
+    {
+      "id": "t05",
+      "tier": "three_join",
+      "question": "What is the average order value by region and product category in dollars?",
+      "ground_truth_sql": "SELECT c.region, p.cat, ROUND(AVG(o.revenue) / 100.0, 2) AS avg_order_value_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        GROUP BY c.region, p.cat ORDER BY c.region, avg_order_value_dollars DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "t06",
+      "tier": "three_join",
+      "question": "What is the total revenue from enterprise customers on Hardware products in dollars?",
+      "ground_truth_sql": "SELECT ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE c.plan = 'enterprise' AND p.cat = 'Hardware'",
+      "result_type": "scalar"
+    },
+    {
+      "id": "t07",
+      "tier": "three_join",
+      "question": "How does revenue from self-serve versus rep-assisted orders break down by product category in dollars?",
+      "ground_truth_sql": "SELECT p.cat,\n               CASE WHEN c.rep IS NULL THEN 'Self-serve' ELSE 'Rep-assisted' END AS order_type,\n               ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        GROUP BY p.cat, order_type ORDER BY p.cat, order_type",
+      "result_type": "rows"
+    },
+    {
+      "id": "t08",
+      "tier": "three_join",
+      "question": "What is the total revenue by plan type and product category in dollars?",
+      "ground_truth_sql": "SELECT c.plan, p.cat, ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        GROUP BY c.plan, p.cat ORDER BY c.plan, revenue_dollars DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "t09",
+      "tier": "three_join",
+      "question": "Which product category is most ordered by free plan customers?",
+      "ground_truth_sql": "SELECT p.cat, COUNT(*) AS order_count\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE c.plan = 'free' GROUP BY p.cat ORDER BY order_count DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "t10",
+      "tier": "three_join",
+      "question": "What is the total revenue from pro and enterprise customers on Software products in 2024 in dollars?",
+      "ground_truth_sql": "SELECT ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE c.plan IN ('pro', 'enterprise') AND p.cat = 'Software'\n          AND o.dt >= '2024-01-01' AND o.dt < '2025-01-01'",
+      "result_type": "scalar"
+    },
+    {
+      "id": "t11",
+      "tier": "three_join",
+      "question": "What is the total number of units sold by product category and customer region?",
+      "ground_truth_sql": "SELECT p.cat, c.region, SUM(o.qty) AS total_units\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        GROUP BY p.cat, c.region ORDER BY p.cat, total_units DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "t12",
+      "tier": "three_join",
+      "question": "What is the average discount given to enterprise customers by product category?",
+      "ground_truth_sql": "SELECT p.cat, ROUND(AVG(o.discount) * 100, 2) AS avg_discount_pct\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE c.plan = 'enterprise' GROUP BY p.cat ORDER BY avg_discount_pct DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "t13",
+      "tier": "three_join",
+      "question": "Which region has the highest revenue from Software products in dollars?",
+      "ground_truth_sql": "SELECT c.region, ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE p.cat = 'Software' GROUP BY c.region ORDER BY revenue_dollars DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "t14",
+      "tier": "three_join",
+      "question": "Which sales rep has closed the most orders for enterprise customers buying Hardware?",
+      "ground_truth_sql": "SELECT c.rep, COUNT(*) AS order_count\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE c.plan = 'enterprise' AND p.cat = 'Hardware' AND c.rep IS NOT NULL\n        GROUP BY c.rep ORDER BY order_count DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "t15",
+      "tier": "three_join",
+      "question": "What is the average order value for starter plan customers buying Software in dollars?",
+      "ground_truth_sql": "SELECT ROUND(AVG(o.revenue) / 100.0, 2) AS avg_order_value_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE c.plan = 'starter' AND p.cat = 'Software'",
+      "result_type": "scalar"
+    },
+    {
+      "id": "t16",
+      "tier": "three_join",
+      "question": "What is the total revenue from customers in the South region who ordered Hardware in dollars?",
+      "ground_truth_sql": "SELECT ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE c.region = 'South' AND p.cat = 'Hardware'",
+      "result_type": "scalar"
+    },
+    {
+      "id": "t17",
+      "tier": "three_join",
+      "question": "Which plan type spends the most on Support products in dollars?",
+      "ground_truth_sql": "SELECT c.plan, ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE p.cat = 'Support' GROUP BY c.plan ORDER BY revenue_dollars DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "t18",
+      "tier": "three_join",
+      "question": "How many orders from pro plan customers for Software products included a discount?",
+      "ground_truth_sql": "SELECT COUNT(*) AS discounted_order_count\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE c.plan = 'pro' AND p.cat = 'Software' AND o.discount > 0",
+      "result_type": "scalar"
+    },
+    {
+      "id": "t19",
+      "tier": "three_join",
+      "question": "What is the revenue contribution of each product category in the East region in dollars?",
+      "ground_truth_sql": "SELECT p.cat, ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE c.region = 'East' GROUP BY p.cat ORDER BY revenue_dollars DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "t20",
+      "tier": "three_join",
+      "question": "Which sales rep has the highest refund rate for Software products?",
+      "ground_truth_sql": "SELECT c.rep, ROUND(100.0 * SUM(o.refunded) / COUNT(*), 2) AS refund_rate_pct\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE c.rep IS NOT NULL AND p.cat = 'Software'\n        GROUP BY c.rep ORDER BY refund_rate_pct DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "t21",
+      "tier": "three_join",
+      "question": "What is the total revenue from non-refunded orders by region and category in dollars?",
+      "ground_truth_sql": "SELECT c.region, p.cat, ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE o.refunded = 0\n        GROUP BY c.region, p.cat ORDER BY c.region, revenue_dollars DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "t22",
+      "tier": "three_join",
+      "question": "How many distinct customers from each plan type have ordered Services products?",
+      "ground_truth_sql": "SELECT c.plan, COUNT(DISTINCT o.cust_id) AS customer_count\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE p.cat = 'Services' GROUP BY c.plan ORDER BY customer_count DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "t23",
+      "tier": "three_join",
+      "question": "What is the average quantity per order by product category for enterprise customers?",
+      "ground_truth_sql": "SELECT p.cat, ROUND(AVG(o.qty), 2) AS avg_qty\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE c.plan = 'enterprise' GROUP BY p.cat ORDER BY avg_qty DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "t24",
+      "tier": "three_join",
+      "question": "What is the total discount amount given by product category and region in dollars?",
+      "ground_truth_sql": "SELECT p.cat, c.region,\n               ROUND(SUM(o.qty * o.unit_price * o.discount) / 100.0, 2) AS total_discount_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        GROUP BY p.cat, c.region ORDER BY p.cat, total_discount_dollars DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "t25",
+      "tier": "three_join",
+      "question": "Which region and product category combination has the highest average order value in dollars?",
+      "ground_truth_sql": "SELECT c.region, p.cat, ROUND(AVG(o.revenue) / 100.0, 2) AS avg_order_value_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        GROUP BY c.region, p.cat ORDER BY avg_order_value_dollars DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "c01",
+      "tier": "complex",
+      "question": "For each region, which product category generates the highest revenue?",
+      "ground_truth_sql": "SELECT region, cat, revenue_dollars FROM (\n            SELECT c.region, p.cat, ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars,\n                   RANK() OVER (PARTITION BY c.region ORDER BY SUM(o.revenue) DESC) AS rnk\n            FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n            GROUP BY c.region, p.cat\n        ) WHERE rnk = 1 ORDER BY region",
+      "result_type": "rows"
+    },
+    {
+      "id": "c02",
+      "tier": "complex",
+      "question": "Which customers have a total spend above the average customer spend?",
+      "ground_truth_sql": "SELECT c.name, c.plan, ROUND(SUM(o.revenue) / 100.0, 2) AS total_spend_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id\n        GROUP BY c.cust_id\n        HAVING SUM(o.revenue) > (\n            SELECT AVG(cust_rev) FROM (SELECT SUM(revenue) AS cust_rev FROM orders GROUP BY cust_id)\n        )\n        ORDER BY total_spend_dollars DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "c03",
+      "tier": "complex",
+      "question": "Which products have a refund rate higher than the overall average?",
+      "ground_truth_sql": "SELECT p.product, ROUND(100.0 * SUM(o.refunded) / COUNT(*), 2) AS refund_rate_pct\n        FROM orders o JOIN products p ON o.sku = p.sku\n        GROUP BY p.sku\n        HAVING (100.0 * SUM(o.refunded) / COUNT(*)) > (\n            SELECT 100.0 * SUM(refunded) / COUNT(*) FROM orders\n        )\n        ORDER BY refund_rate_pct DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "c04",
+      "tier": "complex",
+      "question": "For each sales rep, what percentage of their revenue comes from Software products?",
+      "ground_truth_sql": "SELECT c.rep,\n               ROUND(100.0 * SUM(CASE WHEN p.cat = 'Software' THEN o.revenue ELSE 0 END) / SUM(o.revenue), 2) AS software_revenue_pct\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE c.rep IS NOT NULL GROUP BY c.rep ORDER BY software_revenue_pct DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "c05",
+      "tier": "complex",
+      "question": "What is the cumulative revenue by month in 2024 in dollars?",
+      "ground_truth_sql": "SELECT month, monthly_revenue_dollars,\n               ROUND(SUM(monthly_revenue_dollars) OVER (ORDER BY month), 2) AS cumulative_revenue_dollars\n        FROM (\n            SELECT strftime('%Y-%m', dt) AS month, ROUND(SUM(revenue) / 100.0, 2) AS monthly_revenue_dollars\n            FROM orders WHERE dt >= '2024-01-01' AND dt < '2025-01-01' GROUP BY month\n        ) ORDER BY month",
+      "result_type": "rows"
+    },
+    {
+      "id": "c06",
+      "tier": "complex",
+      "question": "For each plan type, rank the product categories by total revenue.",
+      "ground_truth_sql": "SELECT plan, cat, revenue_dollars,\n               RANK() OVER (PARTITION BY plan ORDER BY revenue_dollars DESC) AS revenue_rank\n        FROM (\n            SELECT c.plan, p.cat, ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n            FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n            GROUP BY c.plan, p.cat\n        ) ORDER BY plan, revenue_rank",
+      "result_type": "rows"
+    },
+    {
+      "id": "c07",
+      "tier": "complex",
+      "question": "Which customers have placed orders in every product category?",
+      "ground_truth_sql": "SELECT c.name, c.plan\n        FROM customers c\n        WHERE (\n            SELECT COUNT(DISTINCT p.cat)\n            FROM orders o JOIN products p ON o.sku = p.sku\n            WHERE o.cust_id = c.cust_id\n        ) = (SELECT COUNT(DISTINCT cat) FROM products)\n        ORDER BY c.name",
+      "result_type": "rows"
+    },
+    {
+      "id": "c08",
+      "tier": "complex",
+      "question": "For each product category, which month in 2024 had the highest revenue?",
+      "ground_truth_sql": "SELECT cat, month, revenue_dollars FROM (\n            SELECT p.cat, strftime('%Y-%m', o.dt) AS month,\n                   ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars,\n                   RANK() OVER (PARTITION BY p.cat ORDER BY SUM(o.revenue) DESC) AS rnk\n            FROM orders o JOIN products p ON o.sku = p.sku\n            WHERE o.dt >= '2024-01-01' AND o.dt < '2025-01-01'\n            GROUP BY p.cat, month\n        ) WHERE rnk = 1 ORDER BY cat",
+      "result_type": "rows"
+    },
+    {
+      "id": "c09",
+      "tier": "complex",
+      "question": "Which customers placed their first order within 30 days of signing up?",
+      "ground_truth_sql": "SELECT c.name, c.plan, c.joined, MIN(o.dt) AS first_order_date\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id\n        GROUP BY c.cust_id\n        HAVING julianday(MIN(o.dt)) - julianday(c.joined) <= 30\n        ORDER BY c.name",
+      "result_type": "rows"
+    },
+    {
+      "id": "c10",
+      "tier": "complex",
+      "question": "What is the total revenue from repeat customers versus first-time buyers in dollars?",
+      "ground_truth_sql": "SELECT CASE WHEN order_count > 1 THEN 'Repeat' ELSE 'First-time' END AS customer_type,\n               ROUND(SUM(total_revenue) / 100.0, 2) AS revenue_dollars\n        FROM (\n            SELECT cust_id, COUNT(*) AS order_count, SUM(revenue) AS total_revenue\n            FROM orders GROUP BY cust_id\n        ) GROUP BY customer_type ORDER BY customer_type",
+      "result_type": "rows"
+    },
+    {
+      "id": "c11",
+      "tier": "complex",
+      "question": "For each region, which sales rep has generated the most revenue?",
+      "ground_truth_sql": "SELECT region, rep, revenue_dollars FROM (\n            SELECT c.region, c.rep, ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars,\n                   RANK() OVER (PARTITION BY c.region ORDER BY SUM(o.revenue) DESC) AS rnk\n            FROM orders o JOIN customers c ON o.cust_id = c.cust_id\n            WHERE c.rep IS NOT NULL GROUP BY c.region, c.rep\n        ) WHERE rnk = 1 ORDER BY region",
+      "result_type": "rows"
+    },
+    {
+      "id": "c12",
+      "tier": "complex",
+      "question": "Which customers have only ever ordered from a single product category?",
+      "ground_truth_sql": "SELECT c.name, c.plan, MAX(p.cat) AS only_category\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        GROUP BY c.cust_id HAVING COUNT(DISTINCT p.cat) = 1\n        ORDER BY c.name",
+      "result_type": "rows"
+    },
+    {
+      "id": "c13",
+      "tier": "complex",
+      "question": "For each product category, what percentage of its revenue came from discounted orders?",
+      "ground_truth_sql": "SELECT p.cat,\n               ROUND(100.0 * SUM(CASE WHEN o.discount > 0 THEN o.revenue ELSE 0 END) / SUM(o.revenue), 2) AS discounted_revenue_pct\n        FROM orders o JOIN products p ON o.sku = p.sku\n        GROUP BY p.cat ORDER BY discounted_revenue_pct DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "c14",
+      "tier": "complex",
+      "question": "Which plan type had the largest increase in order count from 2023 to 2024?",
+      "ground_truth_sql": "SELECT plan, orders_2024 - orders_2023 AS order_count_increase FROM (\n            SELECT c.plan,\n                SUM(CASE WHEN o.dt >= '2023-01-01' AND o.dt < '2024-01-01' THEN 1 ELSE 0 END) AS orders_2023,\n                SUM(CASE WHEN o.dt >= '2024-01-01' AND o.dt < '2025-01-01' THEN 1 ELSE 0 END) AS orders_2024\n            FROM orders o JOIN customers c ON o.cust_id = c.cust_id GROUP BY c.plan\n        ) ORDER BY order_count_increase DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "c15",
+      "tier": "complex",
+      "question": "Who is the top spending customer in each region?",
+      "ground_truth_sql": "SELECT region, name, plan, total_spend_dollars FROM (\n            SELECT c.region, c.name, c.plan,\n                   ROUND(SUM(o.revenue) / 100.0, 2) AS total_spend_dollars,\n                   RANK() OVER (PARTITION BY c.region ORDER BY SUM(o.revenue) DESC) AS rnk\n            FROM orders o JOIN customers c ON o.cust_id = c.cust_id\n            GROUP BY c.region, c.cust_id\n        ) WHERE rnk = 1 ORDER BY region",
+      "result_type": "rows"
+    },
+    {
+      "id": "c16",
+      "tier": "complex",
+      "question": "What is the average number of days between a customer's signup date and their first order?",
+      "ground_truth_sql": "SELECT ROUND(AVG(days_to_first_order), 1) AS avg_days_to_first_order FROM (\n            SELECT julianday(MIN(o.dt)) - julianday(c.joined) AS days_to_first_order\n            FROM orders o JOIN customers c ON o.cust_id = c.cust_id GROUP BY c.cust_id\n        )",
+      "result_type": "scalar"
+    },
+    {
+      "id": "c17",
+      "tier": "complex",
+      "question": "Which products have been ordered by customers from all four regions?",
+      "ground_truth_sql": "SELECT p.product\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        GROUP BY p.sku HAVING COUNT(DISTINCT c.region) = 4\n        ORDER BY p.product",
+      "result_type": "rows"
+    },
+    {
+      "id": "c18",
+      "tier": "complex",
+      "question": "What percentage of customers have placed more than one order?",
+      "ground_truth_sql": "SELECT ROUND(100.0 * SUM(CASE WHEN order_count > 1 THEN 1 ELSE 0 END) / COUNT(*), 2) AS repeat_customer_pct\n        FROM (SELECT cust_id, COUNT(*) AS order_count FROM orders GROUP BY cust_id)",
+      "result_type": "scalar"
+    },
+    {
+      "id": "c19",
+      "tier": "complex",
+      "question": "What is the total revenue by quarter and product category in 2024 in dollars?",
+      "ground_truth_sql": "SELECT p.cat,\n               'Q' || CAST((CAST(strftime('%m', o.dt) AS INTEGER) + 2) / 3 AS TEXT) AS quarter,\n               ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN products p ON o.sku = p.sku\n        WHERE o.dt >= '2024-01-01' AND o.dt < '2025-01-01'\n        GROUP BY p.cat, quarter ORDER BY p.cat, quarter",
+      "result_type": "rows"
+    },
+    {
+      "id": "c20",
+      "tier": "complex",
+      "question": "Which product category has the highest proportion of enterprise customer orders?",
+      "ground_truth_sql": "SELECT p.cat,\n               ROUND(100.0 * SUM(CASE WHEN c.plan = 'enterprise' THEN 1 ELSE 0 END) / COUNT(*), 2) AS enterprise_order_pct\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        GROUP BY p.cat ORDER BY enterprise_order_pct DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "c21",
+      "tier": "complex",
+      "question": "Which customers have an average order value above the average for their plan type?",
+      "ground_truth_sql": "SELECT c.name, c.plan, ROUND(AVG(o.revenue) / 100.0, 2) AS avg_order_value_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id GROUP BY c.cust_id\n        HAVING AVG(o.revenue) > (\n            SELECT AVG(o2.revenue) FROM orders o2 JOIN customers c2 ON o2.cust_id = c2.cust_id\n            WHERE c2.plan = c.plan\n        )\n        ORDER BY avg_order_value_dollars DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "c22",
+      "tier": "complex",
+      "question": "Which month in 2024 had the highest revenue from non-refunded Hardware orders?",
+      "ground_truth_sql": "SELECT strftime('%Y-%m', o.dt) AS month, ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN products p ON o.sku = p.sku\n        WHERE o.dt >= '2024-01-01' AND o.dt < '2025-01-01' AND o.refunded = 0 AND p.cat = 'Hardware'\n        GROUP BY month ORDER BY revenue_dollars DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "c23",
+      "tier": "complex",
+      "question": "For each sales rep, what is their best-performing product category by revenue?",
+      "ground_truth_sql": "SELECT rep, cat, revenue_dollars FROM (\n            SELECT c.rep, p.cat, ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars,\n                   RANK() OVER (PARTITION BY c.rep ORDER BY SUM(o.revenue) DESC) AS rnk\n            FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n            WHERE c.rep IS NOT NULL GROUP BY c.rep, p.cat\n        ) WHERE rnk = 1 ORDER BY rep",
+      "result_type": "rows"
+    },
+    {
+      "id": "c24",
+      "tier": "complex",
+      "question": "For each product, what proportion of its orders came from enterprise customers?",
+      "ground_truth_sql": "SELECT p.product,\n               ROUND(100.0 * SUM(CASE WHEN c.plan = 'enterprise' THEN 1 ELSE 0 END) / COUNT(*), 2) AS enterprise_order_pct\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        GROUP BY p.sku ORDER BY enterprise_order_pct DESC",
+      "result_type": "rows"
+    },
+    {
+      "id": "c25",
+      "tier": "complex",
+      "question": "What is the average number of product categories ordered per customer, by plan type?",
+      "ground_truth_sql": "SELECT c.plan, ROUND(AVG(cat_count), 2) AS avg_categories_per_customer\n        FROM (\n            SELECT o.cust_id, COUNT(DISTINCT p.cat) AS cat_count\n            FROM orders o JOIN products p ON o.sku = p.sku GROUP BY o.cust_id\n        ) sub JOIN customers c ON sub.cust_id = c.cust_id\n        GROUP BY c.plan ORDER BY avg_categories_per_customer DESC",
+      "result_type": "rows"
+    }
+  ]
+}
