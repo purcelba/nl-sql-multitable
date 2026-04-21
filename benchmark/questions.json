@@ -821,6 +821,123 @@
       "question": "What is the average number of product categories ordered per customer, by plan type?",
       "ground_truth_sql": "SELECT c.plan, ROUND(AVG(cat_count), 2) AS avg_categories_per_customer\n        FROM (\n            SELECT o.cust_id, COUNT(DISTINCT p.cat) AS cat_count\n            FROM orders o JOIN products p ON o.sku = p.sku GROUP BY o.cust_id\n        ) sub JOIN customers c ON sub.cust_id = c.cust_id\n        GROUP BY c.plan ORDER BY avg_categories_per_customer DESC",
       "result_type": "rows"
+    },
+    {
+      "id": "s15v",
+      "tier": "single_table",
+      "variant": "vague",
+      "source_id": "s15",
+      "question": "What is our total revenue?",
+      "ground_truth_sql": "SELECT ROUND(SUM(revenue) / 100.0, 2) AS total_revenue_dollars FROM orders",
+      "result_type": "scalar"
+    },
+    {
+      "id": "s25v",
+      "tier": "single_table",
+      "variant": "vague",
+      "source_id": "s25",
+      "question": "What is a typical order worth?",
+      "ground_truth_sql": "SELECT ROUND(AVG(revenue) / 100.0, 2) AS avg_order_revenue_dollars FROM orders",
+      "result_type": "scalar"
+    },
+    {
+      "id": "j04v",
+      "tier": "two_join",
+      "variant": "vague",
+      "source_id": "j04",
+      "question": "Which customers spend the most?",
+      "ground_truth_sql": "SELECT c.name, c.plan, ROUND(SUM(o.revenue) / 100.0, 2) AS total_spend_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id\n        GROUP BY c.cust_id ORDER BY total_spend_dollars DESC LIMIT 5",
+      "result_type": "rows"
+    },
+    {
+      "id": "j15v",
+      "tier": "two_join",
+      "variant": "vague",
+      "source_id": "j15",
+      "question": "What is our best-selling product?",
+      "ground_truth_sql": "SELECT p.product, ROUND(SUM(o.revenue) / 100.0, 2) AS total_revenue_dollars\n        FROM orders o JOIN products p ON o.sku = p.sku\n        GROUP BY p.sku ORDER BY total_revenue_dollars DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "t04v",
+      "tier": "three_join",
+      "variant": "vague",
+      "source_id": "t04",
+      "question": "Who are our top hardware buyers?",
+      "ground_truth_sql": "SELECT c.name, c.plan, ROUND(SUM(o.revenue) / 100.0, 2) AS hardware_spend_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE p.cat = 'Hardware'\n        GROUP BY c.cust_id ORDER BY hardware_spend_dollars DESC LIMIT 5",
+      "result_type": "rows"
+    },
+    {
+      "id": "t13v",
+      "tier": "three_join",
+      "variant": "vague",
+      "source_id": "t13",
+      "question": "Which region is biggest for software?",
+      "ground_truth_sql": "SELECT c.region, ROUND(SUM(o.revenue) / 100.0, 2) AS revenue_dollars\n        FROM orders o JOIN customers c ON o.cust_id = c.cust_id JOIN products p ON o.sku = p.sku\n        WHERE p.cat = 'Software' GROUP BY c.region ORDER BY revenue_dollars DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "c10v",
+      "tier": "complex",
+      "variant": "vague",
+      "source_id": "c10",
+      "question": "How does revenue split between loyal and one-off customers?",
+      "ground_truth_sql": "SELECT CASE WHEN order_count > 1 THEN 'Repeat' ELSE 'First-time' END AS customer_type,\n               ROUND(SUM(total_revenue) / 100.0, 2) AS revenue_dollars\n        FROM (\n            SELECT cust_id, COUNT(*) AS order_count, SUM(revenue) AS total_revenue\n            FROM orders GROUP BY cust_id\n        ) GROUP BY customer_type ORDER BY customer_type",
+      "result_type": "rows"
+    },
+    {
+      "id": "c18v",
+      "tier": "complex",
+      "variant": "vague",
+      "source_id": "c18",
+      "question": "How many of our customers come back for more?",
+      "ground_truth_sql": "SELECT ROUND(100.0 * SUM(CASE WHEN order_count > 1 THEN 1 ELSE 0 END) / COUNT(*), 2) AS repeat_customer_pct\n        FROM (SELECT cust_id, COUNT(*) AS order_count FROM orders GROUP BY cust_id)",
+      "result_type": "scalar"
+    },
+    {
+      "id": "s06v",
+      "tier": "single_table",
+      "variant": "vague",
+      "source_id": "s06",
+      "question": "What plan is popular out west?",
+      "ground_truth_sql": "SELECT plan, COUNT(*) AS cnt FROM customers WHERE region = 'West' GROUP BY plan ORDER BY cnt DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "s08v",
+      "tier": "single_table",
+      "variant": "vague",
+      "source_id": "s08",
+      "question": "Where are our enterprise customers concentrated?",
+      "ground_truth_sql": "SELECT region, COUNT(*) AS enterprise_count FROM customers WHERE plan = 'enterprise' GROUP BY region ORDER BY enterprise_count DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "s11v",
+      "tier": "single_table",
+      "variant": "vague",
+      "source_id": "s11",
+      "question": "What's our premium product?",
+      "ground_truth_sql": "SELECT sku, product, ROUND(price / 100.0, 2) AS price_dollars FROM products ORDER BY price DESC LIMIT 1",
+      "result_type": "rows"
+    },
+    {
+      "id": "s14v",
+      "tier": "single_table",
+      "variant": "vague",
+      "source_id": "s14",
+      "question": "How did sales volume look last year?",
+      "ground_truth_sql": "SELECT COUNT(*) AS orders_2024 FROM orders WHERE dt >= '2024-01-01' AND dt < '2025-01-01'",
+      "result_type": "scalar"
+    },
+    {
+      "id": "s21v",
+      "tier": "single_table",
+      "variant": "vague",
+      "source_id": "s21",
+      "question": "How is our order volume trending?",
+      "ground_truth_sql": "SELECT strftime('%Y', dt) AS year, COUNT(*) AS order_count FROM orders GROUP BY year ORDER BY year",
+      "result_type": "rows"
     }
   ]
 }

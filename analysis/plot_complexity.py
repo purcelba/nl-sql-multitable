@@ -32,7 +32,8 @@ LEVEL_COLORS = {"L0": "#c6dbef", "L1": "#6baed6", "L2": "#2171b5", "L3": "#08306
 
 
 def tier_qids(tier_key):
-    return [q["id"] for q in QUESTIONS["questions"] if q["tier"] == tier_key]
+    return [q["id"] for q in QUESTIONS["questions"]
+            if q["tier"] == tier_key and not q.get("variant")]
 
 
 def accuracy(level, shot_count, qids):

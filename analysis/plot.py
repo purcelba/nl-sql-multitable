@@ -22,7 +22,7 @@ OUTDIR.mkdir(exist_ok=True)
 LEVELS      = ["L0", "L1", "L2", "L3"]
 SHOT_COUNTS = [0, 10, 20, 30, 40]
 TRIALS      = 3
-ALL_QIDS    = [q["id"] for q in QUESTIONS["questions"]]
+ALL_QIDS    = [q["id"] for q in QUESTIONS["questions"] if not q.get("variant")]
 
 SUBTITLE = "Mixed models: Sonnet-4 (first ~1,066 calls) + Haiku-4.5 (remainder)"
 
@@ -123,10 +123,10 @@ def make_line_chart():
 
 
 TIERS = {
-    "Single-table": [q["id"] for q in QUESTIONS["questions"] if q["tier"] == "single_table"],
-    "Two-join":     [q["id"] for q in QUESTIONS["questions"] if q["tier"] == "two_join"],
-    "Three-join":   [q["id"] for q in QUESTIONS["questions"] if q["tier"] == "three_join"],
-    "Complex":      [q["id"] for q in QUESTIONS["questions"] if q["tier"] == "complex"],
+    "Single-table": [q["id"] for q in QUESTIONS["questions"] if q["tier"] == "single_table" and not q.get("variant")],
+    "Two-join":     [q["id"] for q in QUESTIONS["questions"] if q["tier"] == "two_join"     and not q.get("variant")],
+    "Three-join":   [q["id"] for q in QUESTIONS["questions"] if q["tier"] == "three_join"   and not q.get("variant")],
+    "Complex":      [q["id"] for q in QUESTIONS["questions"] if q["tier"] == "complex"      and not q.get("variant")],
 }
 BEST  = ("L3", 40)
 WORST = ("L0",  0)
@@ -184,8 +184,54 @@ def make_bar_chart():
     print(f"Saved {path}")
 
 
+TIER_COLORS = {
+    "Single-table": "#2a9d8f",
+    "Two-join":     "#e9c46a",
+    "Three-join":   "#f4a261",
+    "Complex":      "#e76f51",
+}
+
+
+def _tier_accuracy_at_shots(qids, sc):
+    """Average accuracy across L0-L3 for these qids at the given shot count."""
+    total = hit = 0
+    for lvl in LEVELS:
+        prefixes = {f"{qid}__{lvl}__{sc}__" for qid in qids}
+        for key, v in CACHE.items():
+            if any(key.startswith(p) for p in prefixes):
+                total += 1
+                hit += int(v["result_matches"])
+    return 100 * hit / total if total else 0
+
+
+def make_complexity_chart():
+    fig, ax = plt.subplots(figsize=(8.5, 5.2))
+    for tier_name, qids in TIERS.items():
+        accs = [_tier_accuracy_at_shots(qids, sc) for sc in SHOT_COUNTS]
+        ax.plot(SHOT_COUNTS, accs, marker="o", linewidth=2.3, markersize=8,
+                color=TIER_COLORS[tier_name],
+                label=f"{tier_name} (n={len(qids)})")
+
+    ax.set_xticks(SHOT_COUNTS)
+    ax.set_xlabel("Shot count", fontsize=12)
+    ax.set_ylabel("Result-set accuracy (%)", fontsize=12)
+    ax.set_title("Accuracy by Question Complexity\n"
+                 "(averaged across metadata levels L0-L3) — " + SUBTITLE,
+                 fontsize=12, pad=10)
+    ax.set_ylim(0, 100)
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{v:.0f}%"))
+    ax.grid(axis="y", linestyle="--", alpha=0.4)
+    ax.legend(fontsize=10, loc="lower right", title="Complexity tier")
+    fig.tight_layout()
+    path = OUTDIR / "complexity.png"
+    fig.savefig(path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    print(f"Saved {path}")
+
+
 if __name__ == "__main__":
     make_heatmap()
     make_line_chart()
     make_bar_chart()
+    make_complexity_chart()
     print("Done.")
